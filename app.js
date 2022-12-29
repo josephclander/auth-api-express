@@ -26,16 +26,11 @@ mongoose
   .then(() => console.log(`MongoDB Connected at ${mongoDbURL}`));
 
 const userSchema = {
-  email: String,
-  password: String,
+  email: { type: String, unique: true, required: true },
+  password: { type: String, required: true },
 };
 
 const User = new mongoose.model("User", userSchema);
-
-app.get("/", (req, res) => {
-  const { data } = req.body;
-  res.send(data);
-});
 
 app.post("/register", (req, res) => {
   const newUser = new User({
@@ -45,9 +40,9 @@ app.post("/register", (req, res) => {
 
   newUser.save((err) => {
     if (err) {
-      console.log(err);
+      res.status(400).send(err.message);
     } else {
-      res.send("success");
+      res.status(200).send("success");
     }
   });
 });
