@@ -45,11 +45,35 @@ app.post("/register", (req, res) => {
 
   newUser.save((err) => {
     if (err) {
-      console.log();
+      console.log(err);
     } else {
       res.send("success");
     }
   });
+});
+
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+  // does a user exist with that email?
+  User.findOne({ email }, (err, foundUser) => {
+    if (err) {
+      console.log(err);
+    } else {
+      if (foundUser) {
+        if (foundUser.password === password) {
+          res.send("successful login");
+        } else {
+          res.status(400);
+          res.send("incorrect password for email");
+        }
+      } else {
+        res.status(400);
+        res.send("no account with that email");
+      }
+    }
+  });
+  // if yes, is the password the same?
+  // send a success login
 });
 
 app.listen(PORT, () => {
