@@ -25,26 +25,51 @@ mongoose
   })
   .then(() => console.log(`MongoDB Connected at ${mongoDbURL}`));
 
+const validateEmail = (email) => {
+  const re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  return re.test(email);
+};
+
 const userSchema = {
-  email: { type: String, unique: true, required: true },
-  password: { type: String, required: true },
+  email: {
+    type: String,
+    trim: true,
+    lowercase: true,
+    unique: "Email address is not unique",
+    required: "Email address is required",
+    validate: [validateEmail, "Please fill a valid email address"],
+    match: [
+      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+      "Please fill a valid email address",
+    ],
+  },
+  password: { type: String, required: "Please provide a password" },
 };
 
 const User = new mongoose.model("User", userSchema);
 
-app.post("/register", (req, res) => {
-  const newUser = new User({
-    email: req.body.email,
-    password: req.body.password,
-  });
-
-  newUser.save((err) => {
-    if (err) {
-      res.status(400).send(err.message);
-    } else {
-      res.status(200).send("success");
+app.post("/register", async (req, res) => {
+  try {
+    const newUser = new User({
+      email: req.body.email,
+      password: req.body.password,
+    });
+    await newUser.save();
+    res.status(200).send("success");
+  } catch (error) {
+    if (error.name === "ValidationError") {
+      const validationErrors = {};
+      Object.keys(error.errors).forEach((key) => {
+        validationErrors[key] = error.errors[key].message;
+      });
+      res.status(400).send(validationErrors);
     }
-  });
+    if (error.code === 11000) {
+      res.status(409).send("duplicate email");
+    }
+    console.log(error);
+    res.status(500).send(error);
+  }
 });
 
 app.post("/login", async (req, res) => {
@@ -67,8 +92,6 @@ app.post("/login", async (req, res) => {
       }
     }
   });
-  // if yes, is the password the same?
-  // send a success login
 });
 
 app.listen(PORT, () => {
