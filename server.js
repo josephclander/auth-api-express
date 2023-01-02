@@ -1,7 +1,7 @@
+require('dotenv').config();
 const mongoose = require('mongoose');
 const app = require('./app');
-
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 mongoose.set('strictQuery', false);
 const mongoDbURL =
@@ -15,5 +15,5 @@ mongoose
   .then(() => console.log(`MongoDB Connected at ${mongoDbURL}`));
 
 app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}`);
+  console.log(`App listening on http://localhost:${PORT}`);
 });
