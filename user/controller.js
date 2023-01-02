@@ -33,14 +33,12 @@ const UserController = {
       } else {
         if (foundUser) {
           if (foundUser.password === password) {
-            res.send('successful login');
+            res.status(200).send('successful login');
           } else {
-            res.status(400);
-            res.send('incorrect password for email');
+            res.status(400).send('incorrect password for email');
           }
         } else {
-          res.status(400);
-          res.send('no account with that email');
+          res.status(400).send('no account with that email');
         }
       }
     });
