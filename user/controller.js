@@ -16,12 +16,11 @@ const UserController = {
           validationErrors[key] = error.errors[key].message;
         });
         res.status(400).send(validationErrors);
-      }
-      if (error.code === 11000) {
+      } else if (error.code === 11000) {
         res.status(409).send('duplicate email');
+      } else {
+        res.status(500).send(error);
       }
-      console.log(error);
-      res.status(500).send(error);
     }
   },
   Login: async (req, res) => {
