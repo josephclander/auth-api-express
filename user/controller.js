@@ -24,23 +24,17 @@ const UserController = {
     }
   },
   Login: async (req, res) => {
-    const { email, password } = req.body;
-    // does a user exist with that email?
-    User.findOne({ email }, (err, foundUser) => {
-      if (err) {
-        console.log(err);
+    try {
+      const { email, password } = req.body;
+      const foundUser = await User.findOne({ email });
+      if (!foundUser || foundUser.password !== password) {
+        res.status(400).send('incorrect login details');
       } else {
-        if (foundUser) {
-          if (foundUser.password === password) {
-            res.status(200).send('successful login');
-          } else {
-            res.status(400).send('incorrect password for email');
-          }
-        } else {
-          res.status(400).send('no account with that email');
-        }
+        res.status(200).send('successful login');
       }
-    });
+    } catch (error) {
+      res.status(500).send(error);
+    }
   },
 };
 
