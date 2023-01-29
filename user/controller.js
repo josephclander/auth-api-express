@@ -1,4 +1,5 @@
 const User = require('./schema');
+const jwt = require('jsonwebtoken');
 
 const UserController = {
   Register: async (req, res) => {
@@ -8,7 +9,14 @@ const UserController = {
         password: req.body.password,
       });
       await newUser.save();
-      res.status(200).send('success');
+      const token = jwt.sign(
+        { email: newUser.email },
+        process.env.JWT_SECRET_KEY,
+        {
+          expiresIn: '2h',
+        }
+      );
+      res.status(200).json({ email: newUser.email, token });
     } catch (error) {
       if (error.name === 'ValidationError') {
         const validationErrors = {};
@@ -30,7 +38,14 @@ const UserController = {
       if (!foundUser || foundUser.password !== password) {
         res.status(400).send('incorrect login details');
       } else {
-        res.status(200).send('successful login');
+        const token = jwt.sign(
+          { email: foundUser.email },
+          process.env.JWT_SECRET_KEY,
+          {
+            expiresIn: '2h',
+          }
+        );
+        res.status(200).json({ email: foundUser.email, token });
       }
     } catch (error) {
       res.status(500).send(error);
