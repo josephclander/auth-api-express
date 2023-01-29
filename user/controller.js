@@ -19,7 +19,11 @@ const UserController = {
           expiresIn: '2h',
         }
       );
-      res.status(200).json({ email: newUser.email, token });
+      const options = {
+        maxAge: 60 * 60 * 24,
+        httpOnly: true,
+      };
+      res.status(200).cookie('jwt', token, options).send('sent with cookie');
     } catch (error) {
       if (error.name === 'ValidationError') {
         const validationErrors = {};
@@ -52,7 +56,11 @@ const UserController = {
             expiresIn: '2h',
           }
         );
-        res.status(200).json({ email: foundUser.email, token });
+        const options = {
+          maxAge: 60 * 60 * 24,
+          httpOnly: true,
+        };
+        res.status(200).cookie('jwt', token, options).send('sent with cookie');
       }
     } catch (error) {
       res.status(500).send(error);
