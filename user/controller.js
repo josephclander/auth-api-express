@@ -1,12 +1,15 @@
 const User = require('./schema');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 const UserController = {
   Register: async (req, res) => {
+    const { email, password } = req.body;
+    const encryptedPassword = await bcrypt.hash(password, 10);
     try {
       const newUser = new User({
-        email: req.body.email,
-        password: req.body.password,
+        email: email.toLowerCase(),
+        password: encryptedPassword,
       });
       await newUser.save();
       const token = jwt.sign(
@@ -34,8 +37,8 @@ const UserController = {
   Login: async (req, res) => {
     try {
       const { email, password } = req.body;
-      const foundUser = await User.findOne({ email });
-      if (!foundUser || foundUser.password !== password) {
+      const foundUser = await User.findOne({ email: email.toLowerCase() });
+      if (!foundUser || await !bcrypt.compare(password, foundUser.password)) {
         res.status(400).send('incorrect login details');
       } else {
         const token = jwt.sign(
