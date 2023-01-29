@@ -38,7 +38,11 @@ const UserController = {
     try {
       const { email, password } = req.body;
       const foundUser = await User.findOne({ email: email.toLowerCase() });
-      if (!foundUser || await !bcrypt.compare(password, foundUser.password)) {
+      const isCorrectPassword = await bcrypt.compare(
+        password,
+        foundUser.password
+      );
+      if (!foundUser || !isCorrectPassword) {
         res.status(400).send('incorrect login details');
       } else {
         const token = jwt.sign(
