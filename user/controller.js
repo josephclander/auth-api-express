@@ -60,10 +60,13 @@ const UserController = {
           }
         );
         const options = {
-          maxAge: 60 * 60 * 24,
+          maxAge: 1000 * 60 * 60 * 24,
           httpOnly: true,
         };
-        res.status(200).cookie('jwt', token, options).send('sent with cookie');
+        res
+          .status(200)
+          .cookie('jwt-lander-auth', token, options)
+          .json({ message: 'Logged In -> jwt sent with cookie' });
       }
     } catch (error) {
       res.status(500).send(error);
