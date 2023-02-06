@@ -72,10 +72,24 @@ const UserController = {
       res.status(500).send(error);
     }
   },
+  Logout: async (req, res) => {
+    try {
+      const options = {
+        maxAge: -1,
+        httpOnly: true,
+      };
+      res
+        .status(200)
+        .cookie('jwt_lander_auth', null, options)
+        .json({ message: 'Logged Out' });
+    } catch (err) {
+      console.log(err);
+    }
+  },
   Status: async (req, res) => {
     try {
       const cookiePresent = req.cookies['jwt_lander_auth'];
-      if (!cookiePresent) {
+      if (!cookiePresent || cookiePresent === null) {
         res
           .status(400)
           .json({ message: 'Need to sign in', isAuthenticated: false });
