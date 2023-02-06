@@ -25,8 +25,8 @@ const UserController = {
       };
       res
         .status(200)
-        .cookie('jwt-lander-auth', token, options)
-        .json({ message: 'Logged In -> jwt sent with cookie' });
+        .cookie('jwt_lander_auth', token, options)
+        .json({ message: 'Signed Up & Logged In -> jwt sent with cookie' });
     } catch (error) {
       if (error.name === 'ValidationError') {
         const validationErrors = {};
@@ -65,11 +65,33 @@ const UserController = {
         };
         res
           .status(200)
-          .cookie('jwt-lander-auth', token, options)
+          .cookie('jwt_lander_auth', token, options)
           .json({ message: 'Logged In -> jwt sent with cookie' });
       }
     } catch (error) {
       res.status(500).send(error);
+    }
+  },
+  Status: async (req, res) => {
+    try {
+      const cookiePresent = req.cookies['jwt_lander_auth'];
+      if (!cookiePresent) {
+        res
+          .status(400)
+          .json({ message: 'Need to sign in', isAuthenticated: false });
+      } else {
+        const verifiedCookie = jwt.verify(
+          cookiePresent,
+          process.env.JWT_SECRET_KEY
+        );
+        if (verifiedCookie) {
+          res.status(200).json({ message: 'Success', isAuthenticated: true });
+        } else {
+          res.status(403).json({ message: 'Denied', isAuthenticated: false });
+        }
+      }
+    } catch (err) {
+      console.error(err);
     }
   },
 };
