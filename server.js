@@ -12,8 +12,8 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => console.log(`MongoDB Connected at ${mongoDbURL}`));
+  .then(() => console.log(`MongoDB Connected`));
 
 app.listen(PORT, () => {
-  console.log(`App listening on http://localhost:${PORT}`);
+  console.log(`App listening on port:${PORT}`);
 });
