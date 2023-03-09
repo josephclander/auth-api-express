@@ -22,6 +22,8 @@ const UserController = {
       const options = {
         maxAge: 1000 * 60 * 60 * 24,
         httpOnly: true,
+        sameSite: 'none',
+        secure: true,
       };
       res
         .status(200)
@@ -62,6 +64,8 @@ const UserController = {
         const options = {
           maxAge: 1000 * 60 * 60 * 24,
           httpOnly: true,
+          sameSite: 'none',
+          secure: true,
         };
         res
           .status(200)
@@ -77,6 +81,8 @@ const UserController = {
       const options = {
         maxAge: -1,
         httpOnly: true,
+        sameSite: 'none',
+        secure: true,
       };
       res
         .status(200)
