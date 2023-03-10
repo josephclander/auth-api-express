@@ -6,7 +6,7 @@ const cors = require('cors');
 
 const userRouter = require('./user/routes');
 
-app.use(cors({ credentials: true, origin: 'http://localhost:5173' }));
+app.use(cors({ credentials: true, origin: 'https://auth-client-react.vercel.app/' }));
 app.use(express.json());
 app.use(
   bodyParser.urlencoded({
